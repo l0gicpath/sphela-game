@@ -66,6 +66,7 @@ if (Meteor.isServer) {
       }, this),
       added: _.bind(function(test) {
         console.log('Test added do nothing', test);
+        this.flush();
       }, this)
     });
     this.complete();
@@ -74,16 +75,16 @@ if (Meteor.isServer) {
       handle.stop();
     });
   });
-}
-Meteor.methods({
-  runTest: function() {
-    var test;
-    console.log('Running test.');
-    test = Tests.findOne({});
-    test.testCount = 1;
-    console.log('Updating test to 1.');
-    Tests.update({_id: test._id}, test);
-    console.log('Test ran.', Tests.findOne());
-  },
-});
+  Meteor.methods({
+    runTest: function() {
+      var test;
+      console.log('Running test.');
+      test = Tests.findOne({});
+      test.testCount = 1;
+      console.log('Updating test to 1.');
+      Tests.update({_id: test._id}, test);
+      console.log('Test ran.', Tests.findOne());
+    },
+  });
+  }
 
