@@ -1,25 +1,17 @@
 <head>
-  <title>Sphela World Domination</title>
+  <title>Testing counts.</title>
 </head>
 
 <body>
   {{> app}}
 </body>
 
-
 <template name="app">
-  {{>playerStatus}}
-</template>
-<template name="playerStatus">
-<div class="row player-status">
-  {{#if isPlaying}}
-  <h1>playing the game.</h1>
+  {{#if testSuccess}}
+    <h1>Test complete.</h1>
   {{else}}
-  <div class="span2">
-    <button class="btn join-round">Join Game</button>
-  </div>
+    <button class="btn run-test">Run Test</button>
   {{/if}}
-</div>
 </template>
 
 
