@@ -1,108 +1,25 @@
 <head>
   <title>Sphela World Domination</title>
-  <link href='http://fonts.googleapis.com/css?family=Iceland' rel='stylesheet' type='text/css'>
-<script type="text/javascript">
-
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-37271123-1']);
-  _gaq.push(['_setDomainName', 'sphela.com']);
-  _gaq.push(['_trackPageview']);
-
-  (function() {
-    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-
-</script>
 </head>
 
 <body>
-  <div class="sphela-top login">
-  {{loginButtons align="right"}}
-  </div>
-  <iframe class="github"
-    src="http://ghbtns.com/github-btn.html?user=btipling&repo=sphela-game&type=fork"
-    allowtransparency="true" frameborder="0" scrolling="0" width="62"
-    height="20"></iframe>
   {{> app}}
 </body>
 
-<template name="region">
-  <div class="region-info label label-inverse">
-    <div class="region-name">
-    {{regionName}}
-    </div>
-    <div>
-      Ruler: {{owner}}
-      <span class="player-color" style="background-color:{{color}};"></span>
-    </div>
-    <div>Troops: {{troops}}</div>
-  </div>
-</template>
-
-<template name="leftOver">
-  <li class="dropdown">
-    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Regions</a>
-    <ul class="dropdown-menu regions" role="menu">
-      {{#each leftOverRegions}}
-      <li><a href="{{this.id}}" tabindex="-1" class="left-over-region"
-        data-id="{{this.id}}"
-        >{{this.name}}</a>
-      {{/each}}
-    </ul>
-  </li>
-</template>
 
 <template name="app">
-  <div class="container">
-    <div class="navbar navbar-fixed-bottom">
-      <div class="navbar-inner">
-        <a class="brand" href="#">Sphela</a>
-        <span class="zoom pull-right">
-          <button class="btn zoom-in">
-            <i class="icon-plus"></i>
-          </button>
-          <button class="btn zoom-out">
-            <i class="icon-minus"></i>
-          </button>
-        </span>
-        <ul class="nav">
-          {{> leftOver}}
-        </ul>
-      </div>
-    </div>
+  {{>playerStatus}}
+</template>
+<template name="playerStatus">
+<div class="row player-status">
+  {{#if isPlaying}}
+  <h1>playing the game.</h1>
+  {{else}}
+  <div class="span2">
+    <button class="btn join-round">Join Game</button>
   </div>
-  <div id="main" class="container">
-    {{> region}}
-    {{#constant}}
-      <svg id="map">
-      <defs>
-        <radialGradient id="ocean" cx="50%" cy="50%" r="50%" fx="30%" fy="20%">
-          <stop offset="0%" style="stop-color:#FFF;
-          stop-opacity:1" />
-          <stop offset="100%" style="stop-color:#5AC9FF;stop-opacity:1" />
-        </radialGradient>
-        <filter id="atmosphere" x="-0.5" y="-0.5" width="200%" height="200%">
-          <feGaussianBlur result="blurOut" in="SourceGraphic" stdDeviation="30" />
-          <feBlend in="SourceGraphic" in2="blurOut" mode="normal" />
-        </filter>
-      </defs>
-      </svg>
-    {{/constant}}
-  </div>
-  {{!Uncomment to add config maker.}}
-  {{!> configmaker}}
-  {{>gameViews}}
-  {{>chatInput}}
+  {{/if}}
+</div>
 </template>
 
-<template name="chatInput">
-  <form class="update-chatbox container">
-    <input type="text" class="chat-update"
-    {{#unless currentUser}}disabled="disabled"{{/unless}}/>
-    <input type="submit" class="btn submit-chat" value="chat"
-    {{#unless currentUser}}disabled="disabled"{{/unless}}/>
-  </form>
-</template>
 
