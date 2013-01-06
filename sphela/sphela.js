@@ -1,33 +1,35 @@
 var Tests = new Meteor.Collection('tests');
 
 if (Meteor.isClient) {
-  Meteor.startup(function() {
+  $(function() {
     Session.set('testCount', 0)
-    Meteor.subscribe('connect');
-  });
-  Template.app.testSuccess = function() {
-    var test;
-    console.log('checking test result');
-    test = Tests.findOne();
-    if (!test) {
-      console.log('no test', test);
-      return false;
+    console.log('startup');
+    Template.app.testSuccess = function() {
+      var test;
+      console.log('checking test result');
+      test = Tests.findOne();
+      if (!test) {
+        console.log('no test', test);
+        return false;
+      }
+      console.log('test.testCount', test.testCount);
+      return test.testCount > 0;
+    };
+    function runTest(event) {
+      console.log('running test');
+      Session.set('testCount', 1);
+      Meteor.call('runTest');
     }
-    console.log('test.testCount', test.testCount);
-    return test.testCount > 0;
-  };
-  Template.app.events({
-    'click .run-test': runTest
-  });
-  function runTest(event) {
-    Meteor.call('runTest');
-    Session.set('testCount', 1);
-  }
-  Meteor.autorun(function() {
-    console.log('Tests updated!', Tests.findOne());
-  });
-  Meteor.autosubscribe(function() {
-    Meteor.subscribe('test-results', Session.get('testCount'));
+    Template.app.events({
+      'click .run-test': runTest
+    });
+    Meteor.autorun(function() {
+      console.log('Tests updated!', Tests.findOne());
+    });
+    Meteor.autosubscribe(function() {
+      console.log('subscribing on client to testCount', Session.get('testCount'));
+      Meteor.subscribe('test-results', Session.get('testCount'));
+    });
   });
 }
 
@@ -39,7 +41,7 @@ if (Meteor.isServer) {
         testCount: 0
       };
       console.log('inserting new test');
-      test._id = Tests.insert(test);
+      Tests.insert(test);
     } else {
       console.log('startup reset');
       test.testCount = 0;
@@ -47,17 +49,10 @@ if (Meteor.isServer) {
     }
   });
 
-  Meteor.publish('connect', function() {
-    var test_;
-    console.log('Connecting test, getting initial data.');
-    test_ = Tests.findOne({});
-    this.set('tests', test_._id, test_);
-    this.complete();
-    this.flush();
-  });
 
   Meteor.publish('test-results', function(test) {
     var handle;
+    console.log('publish for test', test);
     handle = Tests.find({testCount: test}).observe({
       changed: _.bind(function(test) {
         console.log('Test changed', test._id, test.testCount);
@@ -65,7 +60,8 @@ if (Meteor.isServer) {
         this.flush();
       }, this),
       added: _.bind(function(test) {
-        console.log('Test added do nothing', test);
+        console.log('Test added', test._id, test.testCount);
+        this.set('tests', test._id, test);
         this.flush();
       }, this)
     });
@@ -87,4 +83,3 @@ if (Meteor.isServer) {
     },
   });
   }
-
